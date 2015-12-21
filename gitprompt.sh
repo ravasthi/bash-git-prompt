@@ -9,14 +9,14 @@ function async_run() {
 function git_prompt_dir() {
   # assume the gitstatus.sh is in the same directory as this script
   # code thanks to http://stackoverflow.com/questions/59895
-  if [ -z "$__GIT_PROMPT_DIR" ]; then
+  if [ -z "$__BASH_GIT_PROMPT_DIR" ]; then
     local SOURCE="${BASH_SOURCE[0]}"
     while [ -h "$SOURCE" ]; do
       local DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
       SOURCE="$(readlink "$SOURCE")"
       [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
     done
-    __GIT_PROMPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    __BASH_GIT_PROMPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
   fi
 }
 
@@ -26,7 +26,7 @@ function echoc() {
 
 function get_theme() {
   local CUSTOM_THEME_FILE="${HOME}/.git-prompt-colors.sh"
-  local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+  local DEFAULT_THEME_FILE="${__BASH_GIT_PROMPT_DIR}/themes/Default.bgptheme"
 
   if [[ -z ${GIT_PROMPT_THEME} ]]; then
     if [[ -r $CUSTOM_THEME_FILE ]]; then
@@ -49,7 +49,7 @@ function get_theme() {
       local theme=""
 
       # use default theme, if theme was not found
-      for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
+      for themefile in "${__BASH_GIT_PROMPT_DIR}/themes/"*.bgptheme; do
         local basename=${themefile##*/}
         if [[ "${basename%.bgptheme}" = "${GIT_PROMPT_THEME}" ]]; then
           theme=$GIT_PROMPT_THEME
@@ -61,14 +61,14 @@ function get_theme() {
         GIT_PROMPT_THEME="Default"
       fi
 
-      __GIT_PROMPT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/${GIT_PROMPT_THEME}.bgptheme"
+      __GIT_PROMPT_THEME_FILE="${__BASH_GIT_PROMPT_DIR}/themes/${GIT_PROMPT_THEME}.bgptheme"
     fi
   fi
 }
 
 function git_prompt_load_theme() {
   get_theme
-  local DEFAULT_THEME_FILE="${__GIT_PROMPT_DIR}/themes/Default.bgptheme"
+  local DEFAULT_THEME_FILE="${__BASH_GIT_PROMPT_DIR}/themes/Default.bgptheme"
   source "${DEFAULT_THEME_FILE}"
   source "${__GIT_PROMPT_THEME_FILE}"
 }
@@ -77,7 +77,7 @@ function git_prompt_list_themes() {
   git_prompt_dir
   get_theme
 
-  for themefile in "${__GIT_PROMPT_DIR}/themes/"*.bgptheme; do
+  for themefile in "${__BASH_GIT_PROMPT_DIR}/themes/"*.bgptheme; do
     local basename=${themefile##*/}
     local theme="${basename%.bgptheme}"
     if [[ "${GIT_PROMPT_THEME}" = "${theme}" ]]; then
@@ -101,7 +101,7 @@ function git_prompt_make_custom_theme() {
     git_prompt_dir
 
     local base="Default"
-    if [[ -n $1 && -r "${__GIT_PROMPT_DIR}/themes/${1}.bgptheme" ]]; then
+    if [[ -n $1 && -r "${__BASH_GIT_PROMPT_DIR}/themes/${1}.bgptheme" ]]; then
       base=$1
       echoc ${Green} "Using theme ${Magenta}\"${base}\"${Green} as base theme!"
     else
@@ -114,9 +114,9 @@ function git_prompt_make_custom_theme() {
       echoc ${Green} "Creating new custom theme in \"${HOME}/.git-prompt-colors.sh\""
       echoc ${DimYellow} "Please add ${Magenta}\"GIT_PROMPT_THEME=Custom\"${DimYellow} to your .bashrc to use this theme"
       if [[ "${base}" == "Default" ]]; then
-        cp "${__GIT_PROMPT_DIR}/themes/Custom.bgptemplate" "${HOME}/.git-prompt-colors.sh"
+        cp "${__BASH_GIT_PROMPT_DIR}/themes/Custom.bgptemplate" "${HOME}/.git-prompt-colors.sh"
       else
-        cp "${__GIT_PROMPT_DIR}/themes/${base}.bgptheme" "${HOME}/.git-prompt-colors.sh"
+        cp "${__BASH_GIT_PROMPT_DIR}/themes/${base}.bgptheme" "${HOME}/.git-prompt-colors.sh"
       fi
     fi
   fi
@@ -125,7 +125,7 @@ function git_prompt_make_custom_theme() {
 # gp_set_file_var ENVAR SOMEFILE
 #
 # If ENVAR is set, check that it's value exists as a readable file.  Otherwise,
-# Set ENVAR to the path to SOMEFILE, based on $HOME, $__GIT_PROMPT_DIR, and the
+# Set ENVAR to the path to SOMEFILE, based on $HOME, $__BASH_GIT_PROMPT_DIR, and the
 # directory of the current script.  The SOMEFILE can be prefixed with '.', or
 # not.
 #
@@ -144,7 +144,7 @@ function gp_set_file_var() {
     eval "$envar="      # set empty envar
     gp_maybe_set_envar_to_path "$envar" "$HOME/.$file" "$HOME/$file" "$HOME/lib/$file" && return 0
     git_prompt_dir
-    gp_maybe_set_envar_to_path "$envar" "$__GIT_PROMPT_DIR/$file" "${0##*/}/$file"     && return 0
+    gp_maybe_set_envar_to_path "$envar" "$__BASH_GIT_PROMPT_DIR/$file" "${0##*/}/$file"     && return 0
   fi
   return 1
 }
@@ -279,7 +279,7 @@ function git_prompt_config() {
   fi
   if [[ -z "$__GIT_STATUS_CMD" ]] ; then          # if GIT_STATUS_CMD not defined..
     git_prompt_dir
-    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__GIT_PROMPT_DIR/$GIT_PROMPT_STATUS_COMMAND" ; then
+    if ! gp_maybe_set_envar_to_path __GIT_STATUS_CMD "$__BASH_GIT_PROMPT_DIR/$GIT_PROMPT_STATUS_COMMAND" ; then
       echo 1>&2 "Cannot find $GIT_PROMPT_STATUS_COMMAND!"
     fi
     # __GIT_STATUS_CMD defined
@@ -585,7 +585,7 @@ function gp_install_prompt {
   esac
 
   git_prompt_dir
-  source "$__GIT_PROMPT_DIR/git-prompt-help.sh"
+  source "$__BASH_GIT_PROMPT_DIR/git-prompt-help.sh"
 }
 
 gp_install_prompt

@@ -1,5 +1,5 @@
-if not set -q __GIT_PROMPT_DIR
-    set __GIT_PROMPT_DIR ~/.gitprompt
+if not set -q __BASH_GIT_PROMPT_DIR
+    set __BASH_GIT_PROMPT_DIR ~/.gitprompt
 end
 
 # Colors
@@ -44,7 +44,7 @@ function fish_prompt
     set PROMPT_END " \n$WHITE$Time$ResetColor  \$ "
 
     set -e __CURRENT_GIT_STATUS
-    set gitstatus "$__GIT_PROMPT_DIR/gitstatus.py"
+    set gitstatus "$__BASH_GIT_PROMPT_DIR/gitstatus.py"
 
     set _GIT_STATUS (python $gitstatus)
     set __CURRENT_GIT_STATUS $_GIT_STATUS

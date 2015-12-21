@@ -5,14 +5,14 @@
 #
 # Alan K. Stebbens <aks@stebbens.org> [http://github.com/aks]
 
-if [ -z "${__GIT_PROMPT_DIR}" ]; then
+if [ -z "${__BASH_GIT_PROMPT_DIR}" ]; then
   SOURCE="${BASH_SOURCE[0]}"
   while [ -h "${SOURCE}" ]; do
     DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
     SOURCE="$(readlink "${SOURCE}")"
     [[ $SOURCE != /* ]] && SOURCE="${DIR}/${SOURCE}"
   done
-  __GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
+  __BASH_GIT_PROMPT_DIR="$( cd -P "$( dirname "${SOURCE}" )" && pwd )"
 fi
 
 if [ -z "${GIT_SHOW_UNTRACKED_FILES}" ]; then
